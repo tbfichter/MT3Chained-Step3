@@ -8,6 +8,8 @@ on:
 env:
   APP_NAME: mt3chained-step3
   LOGIN_SERVER: acr29833937032923.azurecr.io
+  KV_NAME: kv29833937
+  SECRET_NAME: mt3chained-step3-tag
 
 jobs:
 
@@ -44,3 +46,9 @@ jobs:
           tags: |
             ${{ env.LOGIN_SERVER }}/${{ env.APP_NAME }}:${{ github.run_number }}
             ${{ env.LOGIN_SERVER }}/${{ env.APP_NAME }}:latest
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - run: |
+          az keyvault secret set --vault-name ${{ env.KV_NAME }} --name ${{ env.SECRET_NAME }} --value ${{ github.run_number }}
